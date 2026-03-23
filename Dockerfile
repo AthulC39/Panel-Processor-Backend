@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM --platform=linux/amd64 python:3.11-slim
 
 WORKDIR /app
 
@@ -39,14 +39,11 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
-# ODA notes some Ubuntu systems need libxcb-util.so.0
 RUN if [ ! -e /usr/lib/x86_64-linux-gnu/libxcb-util.so.0 ] && [ -e /usr/lib/x86_64-linux-gnu/libxcb-util.so.1 ]; then \
       ln -s /usr/lib/x86_64-linux-gnu/libxcb-util.so.1 /usr/lib/x86_64-linux-gnu/libxcb-util.so.0; \
     fi
 
-# Copy the DEB you downloaded manually into the image
 COPY ODA_PACKAGE.deb /tmp/ODA_PACKAGE.deb
-
 RUN apt-get update && apt-get install -y /tmp/ODA_PACKAGE.deb \
     && rm /tmp/ODA_PACKAGE.deb
 
@@ -57,5 +54,9 @@ COPY . .
 
 ENV PYTHONUNBUFFERED=1
 ENV PORT=10000
+ENV XDG_RUNTIME_DIR=/tmp/xdg-runtime
+ENV QT_QPA_PLATFORM=xcb
 
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
+RUN mkdir -p /tmp/xdg-runtime && chmod 700 /tmp/xdg-runtime
+
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --workers 1
