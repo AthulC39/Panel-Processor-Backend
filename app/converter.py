@@ -24,8 +24,11 @@ def _prepare_headless_env():
     os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
 
-def convert_dwg_to_dxf_in_place(input_dir: Path, output_dir: Path) -> list[Path]:
-    input_dir = Path(input_dir)
+def _safe_name(path: Path, index: int) -> str:
+    return f"{index:05d}_{path.stem}.dxf"
+
+
+def convert_dwg_files_to_dxf(dwg_files: list[Path], output_dir: Path) -> list[Path]:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -41,8 +44,8 @@ def convert_dwg_to_dxf_in_place(input_dir: Path, output_dir: Path) -> list[Path]
 
     converted_files = []
 
-    for dwg_file in input_dir.glob("*.dwg"):
-        out_file = output_dir / f"{dwg_file.stem}.dxf"
+    for index, dwg_file in enumerate(dwg_files, start=1):
+        out_file = output_dir / _safe_name(dwg_file, index)
 
         try:
             odafc.convert(
