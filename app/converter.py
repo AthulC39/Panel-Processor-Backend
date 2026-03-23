@@ -9,6 +9,8 @@ oda_path = (
 )
 
 odafc.unix_exec_path = oda_path
+odafc.xvfb_run = shutil.which("xvfb-run") or "/usr/bin/xvfb-run"
+
 
 def convert_dwg_to_dxf_in_place(input_dir: Path, output_dir: Path) -> list[Path]:
     input_dir = Path(input_dir)
@@ -16,6 +18,7 @@ def convert_dwg_to_dxf_in_place(input_dir: Path, output_dir: Path) -> list[Path]
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("Using ODA path:", odafc.unix_exec_path)
+    print("Using xvfb-run:", odafc.xvfb_run)
     print("Installed?", odafc.is_installed())
 
     if not odafc.is_installed():

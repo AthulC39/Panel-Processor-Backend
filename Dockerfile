@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     curl \
     ca-certificates \
+    xvfb \
     libglib2.0-0 \
     libxrender1 \
     libxext6 \
