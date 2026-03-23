@@ -22,7 +22,7 @@ app = FastAPI(title="CAD Processing API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-     
+        "http://localhost:3000",
         "https://infin8cadbomgenerator.vercel.app",
     ],
     allow_credentials=True,
